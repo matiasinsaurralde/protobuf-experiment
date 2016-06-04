@@ -24,7 +24,14 @@ func NewClient( Config map[string]string ) Client {
   }
   client.Config = Config
   client.Prepare()
-  go client.Subscribe()
+
+  if client.Config["Topic"] == "" {
+    client.Log.Println("Running in publish mode.")
+  } else {
+    client.Log.Println( "Running in subscribe mode.")
+    go client.Subscribe()
+  }
+
   return client
 }
 
@@ -60,7 +67,8 @@ func (c *Client) Subscribe() {
           TopicFilter: []byte( c.Config["Topic"] ),
           QoS: mqtt.QoS0,
           Handler: func( topicName, message []byte) {
-            c.Log.Printf("Message @%s: %s\n", topicName, string(message))
+            c.Log.Printf("Message @ %s\n", topicName )
+            c.Log.Println( message )
           },
         },
       },
@@ -73,20 +81,24 @@ func (c *Client) Subscribe() {
 
 /* Initialize the message protobuf */
 
-func (c *Client) SendMessage( text string ) {
+func (c *Client) SendMessage( Text string, Topic string ) {
   m := &experiment.Message{
-    Body: proto.String( text),
+    Body: proto.String( Text),
+  }
+
+  if m == nil {
+
   }
 
   err := c.MqttClient.Publish(&client.PublishOptions{
     QoS: mqtt.QoS0,
-    TopicName: []byte(c.Config["Topic"]),
-    Message: []byte("xd"),
+    TopicName: []byte( Topic ),
+    Message: []byte( Text),
   })
 
   if err != nil {
     c.Log.Fatal("Can't send message: %v", err)
   }
 
-  c.Log.Println("Message", m)
+  // c.Log.Println("Message", m)
 }
