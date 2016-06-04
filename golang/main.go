@@ -28,8 +28,8 @@ func main() {
   })
 
   for {
-    log.Println( "Publishing a test message" )
-    ChatClient.SendMessage("")
+    // log.Println( "Publishing a test message" )
+    // ChatClient.SendMessage("")
     time.Sleep( 3 * time.Second )
   }
 }
