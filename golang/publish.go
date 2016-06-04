@@ -2,12 +2,13 @@ package main
 
 import(
   "log"
+  "time"
 
   "github.com/matiasinsaurralde/protobuf-experiment/golang/mqttchat"
 )
 
 const MqttNetwork string = "tcp"
-const MqttAddress string = "test.mosquitto.org:1883"
+const MqttAddress string = "iot.eclipse.org:1883"
 const MqttClientID string = "testclient"
 
 var ChatClient MqttChat.Client
@@ -17,7 +18,7 @@ var ChatClient MqttChat.Client
 func main() {
   log.Println("main()")
 
-  Topic := "TopSecret123"
+  Topic := "topsecret"
 
   ChatClient = MqttChat.NewClient(map[string]string{
     "Network": MqttNetwork,
@@ -25,9 +26,8 @@ func main() {
     "ClientID": MqttClientID,
   })
 
-  ChatClient.SendMessage( Topic, "hello")
-
   for {
-
+    ChatClient.SendMessage( "hello", Topic)
+    time.Sleep( 2 * time.Second )
   }
 }
