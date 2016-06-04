@@ -1,0 +1,22 @@
+{
+  "name": "protobuf-experiment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matiasinsaurralde/protobuf-experiment.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matiasinsaurralde/protobuf-experiment/issues"
+  },
+  "homepage": "https://github.com/matiasinsaurralde/protobuf-experiment#readme",
+  "dependencies": {
+    "protobufjs": "^5.0.1"
+  }
+}
