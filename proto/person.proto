@@ -1,0 +1,6 @@
+message Abc {
+  required string name = 1;
+  required string bio = 2;
+  required string quote = 3;
+  required int32 age = 4;
+}
