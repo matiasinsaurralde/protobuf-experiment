@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/matiasinsaurralde/protobuf-experiment#readme",
   "dependencies": {
+    "mqtt": "^1.10.0",
     "protobufjs": "^5.0.1"
   }
 }
