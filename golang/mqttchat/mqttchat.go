@@ -13,14 +13,16 @@ import(
 
 type Client struct {
   MqttClient *client.Client
+  Config map[string]string
   Log *log.Logger
 }
 
-func NewClient( Params map[string]string ) Client {
+func NewClient( Config map[string]string ) Client {
   logger := log.New( os.Stdout, "MqttChat.Client", log.Lshortfile)
   client := Client{
     Log: logger,
   }
+  client.Config = Config
   client.Prepare()
   return client
 }
@@ -37,9 +39,9 @@ func (c *Client) Prepare() {
   defer c.MqttClient.Terminate()
 
   err := c.MqttClient.Connect(&client.ConnectOptions{
-    Network: "tcp",
-    Address: "127.0.0.1",
-    ClientID: []byte("mqttchat"),
+    Network: c.Config["Network"],
+    Address: c.Config["Address"],
+    ClientID: []byte( c.Config["ClientID"]),
   })
 
   if err != nil {
