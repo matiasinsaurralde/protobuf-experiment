@@ -24,15 +24,17 @@ func NewClient( Config map[string]string ) Client {
   }
   client.Config = Config
   client.Prepare()
+  go client.Subscribe()
   return client
 }
 
 /* Prepare MQTT client */
 
 func (c *Client) Prepare() {
+  log.Println( "Preparing...")
   c.MqttClient = client.New(&client.Options{
     ErrorHandler: func(err error) {
-      c.Log.Println( "ERROR")
+      c.Log.Fatalf( "Client error: %v", err)
     },
   })
 
@@ -48,9 +50,25 @@ func (c *Client) Prepare() {
     c.Log.Fatalf( "Can't connect: %v", err )
   }
 
-  if mqtt.QoS0 == 1 {
+}
 
-  }
+func (c *Client) Subscribe() {
+  log.Println( "Subscribing...")
+  err := c.MqttClient.Subscribe(&client.SubscribeOptions{
+      SubReqs: []*client.SubReq{
+        &client.SubReq{
+          TopicFilter: []byte( c.Config["Topic"] ),
+          QoS: mqtt.QoS0,
+          Handler: func( topicName, message []byte) {
+            c.Log.Printf("Message @%s: %s\n", topicName, string(message))
+          },
+        },
+      },
+    })
+
+    if err != nil {
+      c.Log.Fatalf( "Can't subscribe: %v", err )
+    }
 }
 
 /* Initialize the message protobuf */
@@ -59,5 +77,16 @@ func (c *Client) SendMessage( text string ) {
   m := &experiment.Message{
     Body: proto.String( text),
   }
+
+  err := c.MqttClient.Publish(&client.PublishOptions{
+    QoS: mqtt.QoS0,
+    TopicName: []byte(c.Config["Topic"]),
+    Message: []byte("xd"),
+  })
+
+  if err != nil {
+    c.Log.Fatal("Can't send message: %v", err)
+  }
+
   c.Log.Println("Message", m)
 }
