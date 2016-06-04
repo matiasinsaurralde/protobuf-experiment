@@ -1,3 +1,9 @@
 message Message {
   required string body = 1;
+  required Profile profile = 2;
+  message Profile {
+    required string name = 1;
+    required string nick = 2;
+    required int32 age = 3;
+  }
 }
