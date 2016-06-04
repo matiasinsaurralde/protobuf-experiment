@@ -1,4 +1,4 @@
-message Abc {
+message Person {
   required string name = 1;
   required string bio = 2;
   required string quote = 3;
