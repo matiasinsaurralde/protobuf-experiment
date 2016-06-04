@@ -1,10 +1,10 @@
 package main
 
-import(
-  "log"
-  "github.com/golang/protobuf/proto"
+import (
+	"github.com/golang/protobuf/proto"
+	"log"
 )
 
 func main() {
-  log.Println("protobuf experiment")
+	log.Println("protobuf experiment")
 }
