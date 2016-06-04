@@ -14,15 +14,18 @@ import(
 type Client struct {
   MqttClient *client.Client
   Config map[string]string
+  MessageHandler func(string, []byte)
   Log *log.Logger
 }
 
-func NewClient( Config map[string]string ) Client {
+func NewClient( Config map[string]string, MessageHandler func(string, []byte) ) Client {
   logger := log.New( os.Stdout, "MqttChat.Client", log.Lshortfile)
   client := Client{
     Log: logger,
   }
+
   client.Config = Config
+  client.MessageHandler = MessageHandler
   client.Prepare()
 
   if client.Config["Topic"] == "" {
@@ -41,7 +44,8 @@ func (c *Client) Prepare() {
   log.Println( "Preparing...")
   c.MqttClient = client.New(&client.Options{
     ErrorHandler: func(err error) {
-      c.Log.Fatalf( "Client error: %v", err)
+      // c.Log.Fatalf( "Client error: %v", err)
+      panic(err)
     },
   })
 
@@ -67,8 +71,9 @@ func (c *Client) Subscribe() {
           TopicFilter: []byte( c.Config["Topic"] ),
           QoS: mqtt.QoS0,
           Handler: func( topicName, message []byte) {
-            c.Log.Printf("Message @ %s\n", topicName )
-            c.Log.Println( message )
+            c.MessageHandler(string(topicName), message)
+            // c.Log.Printf("Message @ %s\n", topicName )
+            // c.Log.Println( message )
           },
         },
       },
@@ -82,23 +87,25 @@ func (c *Client) Subscribe() {
 /* Initialize the message protobuf */
 
 func (c *Client) SendMessage( Text string, Topic string ) {
+
   m := &experiment.Message{
     Body: proto.String( Text),
   }
 
-  if m == nil {
+  data, err := proto.Marshal(m)
 
+  if err != nil {
+    c.Log.Fatal( "Can't marshal: %v", err )
   }
 
-  err := c.MqttClient.Publish(&client.PublishOptions{
+  err = c.MqttClient.Publish(&client.PublishOptions{
     QoS: mqtt.QoS0,
     TopicName: []byte( Topic ),
-    Message: []byte( Text),
+    Message: data,
   })
 
   if err != nil {
     c.Log.Fatal("Can't send message: %v", err)
   }
 
-  // c.Log.Println("Message", m)
 }
