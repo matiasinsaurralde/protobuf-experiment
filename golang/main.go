@@ -6,7 +6,9 @@ import(
   "github.com/matiasinsaurralde/protobuf-experiment/golang/mqttchat"
 )
 
-const MqttUrl string = "mqtt://test.mosquitto.org"
+const MqttNetwork string = "tcp"
+const MqttAddress string = "test.mosquitto.org:1883"
+const MqttClientID string = "testclient"
 
 var ChatClient MqttChat.Client
 
@@ -16,6 +18,8 @@ func main() {
   log.Println("main()")
 
   ChatClient = MqttChat.NewClient(map[string]string{
-    "Url": MqttUrl,
+    "Network": MqttNetwork,
+    "Address": MqttAddress,
+    "ClientID": MqttClientID,
   })
 }
