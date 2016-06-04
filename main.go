@@ -35,6 +35,17 @@ func main() {
 
   log.Println( "marshalling a Person{}", string(jsonP) )
 
+  log.Println( "marshaled (JSON) []byte length:", len(jsonP), ":/" )
+
+  compressedJsonP, _ := enc.CompressBuffer( nil, jsonP, make([]byte, 0))
+
+  log.Println( "compressedJsonP []byte length:", len(compressedJsonP))
+
+  lenDiff := len(jsonP) - len(compressedJsonP)
+  compressionPercentage := float64(lenDiff) / float64(len(jsonP)) * 100.0
+
+  log.Printf( "compression: %.2f %%", compressionPercentage)
+
   input := []byte("asdsadasdasdasdasdas")
   // inputB64 := base64.StdEncoding.EncodeToString(input)
 
