@@ -1,5 +1,3 @@
-package experiment;
-
 message Message {
   required string body = 1;
 }
