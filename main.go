@@ -4,7 +4,7 @@ import (
 	// "github.com/golang/protobuf/proto"
   "gopkg.in/kothar/brotli-go.v0/enc"
   // "gopkg.in/kothar/brotli-go.v0/dec"
-  // "encoding/base64"
+  "encoding/base64"
   "encoding/json"
 	"log"
 )
@@ -46,18 +46,12 @@ func main() {
 
   log.Printf( "compression: %.2f %%", compressionPercentage)
 
-  input := []byte("asdsadasdasdasdasdas")
-  // inputB64 := base64.StdEncoding.EncodeToString(input)
+  b64P := base64.StdEncoding.EncodeToString( jsonP )
 
-  log.Println( "input:", input)
-  // log.Println( "input b64:", inputB64, "length:", len(inputB64) )
+  log.Println( "jsonP -> base64:", b64P, "length:", len(b64P))
 
-  compressed, _ := enc.CompressBuffer(nil, input, make([]byte, 0))
-  // compressedB64 := base64.StdEncoding.EncodeToString(compressed)
-  log.Println( "output:", compressed)
-  // log.Println( "compressed b64:", compressedB64, "length:", len(compressedB64))
+  b64CP := base64.StdEncoding.EncodeToString( compressedJsonP )
 
-  // decompressed, _ := dec.DecompressBuffer(compressed, make([]byte, 0))
+  log.Println( "compressedJsonP -> base64:", b64CP, "length:", len(b64CP))
 
-	// log.Println("protobuf experiment")
 }
