@@ -14,11 +14,11 @@ import(
 type Client struct {
   MqttClient *client.Client
   Config map[string]string
-  MessageHandler func(string, []byte)
+  MessageHandler func(string, *message.Message)
   Log *log.Logger
 }
 
-func NewClient( Config map[string]string, MessageHandler func(string, []byte) ) Client {
+func NewClient( Config map[string]string, MessageHandler func(string, *message.Message) ) Client {
   logger := log.New( os.Stdout, "MqttChat.Client", log.Lshortfile)
   client := Client{
     Log: logger,
@@ -70,10 +70,18 @@ func (c *Client) Subscribe() {
         &client.SubReq{
           TopicFilter: []byte( c.Config["Topic"] ),
           QoS: mqtt.QoS0,
-          Handler: func( topicName, message []byte) {
-            c.MessageHandler(string(topicName), message)
-            // c.Log.Printf("Message @ %s\n", topicName )
-            // c.Log.Println( message )
+          Handler: func( topicName, rawMessage []byte) {
+            m := &message.Message{}
+            err := proto.Unmarshal(rawMessage, m)
+
+            if err != nil {
+              c.Log.Println( "Can't unmarshal: %v", err )
+              return
+            }
+
+            c.MessageHandler(string(topicName), m )
+            c.Log.Printf("Message @ %s\n", topicName )
+            c.Log.Println( rawMessage )
           },
         },
       },
@@ -88,11 +96,20 @@ func (c *Client) Subscribe() {
 
 func (c *Client) SendMessage( Text string, Topic string ) {
 
-  m := &experiment.Message{
+  profile := message.Message_Profile{
+    Name: proto.String("Matias"),
+    Nick: proto.String("mati"),
+    Age: proto.Int(21),
+  }
+
+  m := &message.Message{
     Body: proto.String( Text),
+    Profile: &profile,
   }
 
   data, err := proto.Marshal(m)
+
+  log.Println( "*data", data, "\n", "data(string):", string(data))
 
   if err != nil {
     c.Log.Fatal( "Can't marshal: %v", err )
