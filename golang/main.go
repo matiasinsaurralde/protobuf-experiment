@@ -3,25 +3,19 @@ package main
 import(
   "log"
 
-  "github.com/golang/protobuf/proto"
-  "github.com/yosssi/gmq/mqtt"
-  "github.com/yosssi/gmq/mqtt/client"
-
-  "github.com/matiasinsaurralde/protobuf-experiment/proto"
+  "github.com/matiasinsaurralde/protobuf-experiment/golang/mqttchat"
 )
 
 const MqttUrl string = "mqtt://test.mosquitto.org"
 
-/* Initialize the message protobuf */
-
-func SendMessage( text string ) {
-  m := &experiment.Message{
-    Body: proto.String( text),
-  }
-}
+var ChatClient MqttChat.Client
 
 /* The main function */
 
 func main() {
   log.Println("main()")
+
+  ChatClient = MqttChat.NewClient(map[string]string{
+    "Url": MqttUrl,
+  })
 }
