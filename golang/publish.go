@@ -24,7 +24,7 @@ func main() {
     "Network": MqttNetwork,
     "Address": MqttAddress,
     "ClientID": MqttClientID,
-  })
+  }, nil)
 
   for {
     ChatClient.SendMessage( "hello", Topic)

@@ -5,6 +5,7 @@ import(
   // "time"
 
   "github.com/matiasinsaurralde/protobuf-experiment/golang/mqttchat"
+  "github.com/matiasinsaurralde/protobuf-experiment/proto"
 )
 
 const MqttNetwork string = "tcp"
@@ -25,7 +26,7 @@ func main() {
     "Address": MqttAddress,
     "ClientID": MqttClientID,
     "Topic": Topic,
-  }, func( Topic string, Message []byte) {
+  }, func( Topic string, Message *message.Message) {
     log.Println( "Receiving message @", Topic, Message )
   })
 
