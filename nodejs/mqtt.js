@@ -17,9 +17,9 @@ client.on('connect', function () {
       msg.profile = new Message.Profile('Carlos', 'eroto', 28);
       var bb = msg.encodeNB();
       console.log(bb);
-      var bbComp = brotli.compress(bb, true);
+      var bbComp = brotli.compress(bb, false);
       console.log(bbComp);
-      client.publish('topsecret', bbComp);
+      // client.publish('topsecret', bbComp);
   }, 1000);
   
 });
