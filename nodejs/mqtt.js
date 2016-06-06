@@ -1,5 +1,6 @@
 var mqtt    = require('mqtt');
 var ProtoBuf = require('protobufjs');
+var brotli = require('brotli');
 
 var builder = ProtoBuf.protoFromFile('../proto/message.proto');
 var Message = builder.build('Message');
@@ -15,14 +16,19 @@ client.on('connect', function () {
       msg.body = 'hola';
       msg.profile = new Message.Profile('Carlos', 'eroto', 28);
       var bb = msg.encodeNB();
-      client.publish('topsecret', bb);
+      console.log(bb);
+      var bbComp = brotli.compress(bb, true);
+      console.log(bbComp);
+      client.publish('topsecret', bbComp);
   }, 1000);
   
 });
  
 client.on('message', function (topic, message) {
-  // message is Buffer 
-  var dec = Message.decode(message);
+  // message is Buffer
+  bbDecomp = brotli.decompress(message);
+  var dec = Message.decode(bbDecomp);
+  //console.log(message);
   console.log(dec);
   //client.end();
 });

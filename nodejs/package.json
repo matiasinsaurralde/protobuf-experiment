@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/matiasinsaurralde/protobuf-experiment#readme",
   "dependencies": {
+    "brotli": "^1.2.0",
     "mqtt": "^1.10.0",
     "protobufjs": "^5.0.1"
   }
