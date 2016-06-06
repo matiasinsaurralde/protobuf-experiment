@@ -3,8 +3,16 @@ package main
 import (
 	"encoding/base64"
 	"encoding/json"
-	"gopkg.in/kothar/brotli-go.v0/enc"
+
 	"log"
+	// "os"
+
+	"gopkg.in/kothar/brotli-go.v0/enc"
+	"github.com/golang/protobuf/proto"
+
+	// "github.com/andrewstuart/yenc"
+
+	"github.com/matiasinsaurralde/protobuf-experiment/proto/person"
 )
 
 type Person struct {
@@ -52,4 +60,37 @@ func main() {
 
 	log.Println("compressedJsonP -> base64:", b64CP, "length:", len(b64CP))
 
+	protoP := &person.Person{
+		Name: proto.String(p.Name),
+		Bio: proto.String(p.Bio),
+		Quote: proto.String(p.Quote),
+		Age: proto.Int(p.Age),
+	}
+
+	protoBuf, err := proto.Marshal( protoP )
+
+	log.Println( "Protobuf length:", len(protoBuf))
+
+	if err != nil {
+		panic(err)
+	}
+
+	compressedProtoBuf, _ := enc.CompressBuffer(nil, protoBuf, make([]byte, 0))
+
+	log.Println("compressed protobuf length:", len(compressedProtoBuf))
+
+	lenDiff = len(protoBuf) - len(compressedProtoBuf)
+	compressionPercentage = float64(lenDiff) / float64(len(protoBuf)) * 100.0
+
+	log.Printf("compression: %.2f %%", compressionPercentage)
+
+	b64Protobuf := base64.StdEncoding.EncodeToString(compressedProtoBuf)
+
+	log.Println("protobuf -> b64", b64Protobuf, "length:", len(b64Protobuf))
+
+	/*
+	yencWriter := yenc.NewWriter(os.Stdout)
+	yencWriter.Write(compressedProtoBuf)
+	yencWriter.Close()
+	*/
 }
