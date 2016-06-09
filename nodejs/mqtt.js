@@ -17,18 +17,16 @@ client.on('connect', function () {
       msg.profile = new Message.Profile('Carlos', 'eroto', 28);
       var bb = msg.encodeNB();
       console.log(bb);
-      var bbComp = brotli.compress(bb, false);
-      console.log(bbComp);
-      // client.publish('topsecret', bbComp);
+      var bbComp = new Buffer( brotli.compress(bb, false) );
+      client.publish('topsecret', bbComp);
   }, 1000);
   
 });
  
 client.on('message', function (topic, message) {
-  // message is Buffer
+  console.log("original length:", message.length)
   bbDecomp = brotli.decompress(message);
+  console.log("decompressed length:", bbDecomp.length)
   var dec = Message.decode(bbDecomp);
-  //console.log(message);
   console.log(dec);
-  //client.end();
 });
